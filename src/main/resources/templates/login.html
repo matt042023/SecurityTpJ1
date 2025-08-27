@@ -140,12 +140,11 @@
 
     <!-- Message d'information pour les développeurs -->
     <div class="info-box">
-        <strong>ℹ️ Utilisateurs de test disponibles</strong><br>
-        👨‍💻 <code>matthieu</code> / <code>password123</code> (USER, ADMIN)<br>
-        👩‍💼 <code>alice</code> / <code>alice2025</code> (USER)<br>
-        👨‍💼 <code>bob</code> / <code>bob2025</code> (USER, MANAGER)<br>
-        🔑 <code>admin</code> / <code>admin123</code> (ADMIN, MANAGER, USER)<br>
-        🧪 <code>test</code> / <code>test</code> (USER)
+        <strong>👥 Utilisateurs disponibles</strong><br>
+        <strong>matthieu</strong> : <code>dev2024</code> (ADMIN, DEVELOPER)<br>
+        <strong>alice</strong> : <code>alice123</code> (USER)<br>
+        <strong>bob</strong> : <code>manager456</code> (MANAGER)<br>
+        <strong>admin</strong> : <code>admin789</code> (ADMIN, SYSTEM)
     </div>
 
     <!-- Affichage des erreurs de login -->
@@ -164,7 +163,7 @@
             <label for="username">👤 Nom d'utilisateur :</label>
             <input type="text" id="username" name="username" required
                    placeholder="Entrez votre nom d'utilisateur"
-                   value="test">
+                   value="matthieu">
         </div>
 
         <div class="form-group">
@@ -180,12 +179,10 @@
 
     <!-- Liens utiles pour le développement -->
     <div style="margin-top: 20px; text-align: center; font-size: 12px; color: #999;">
-        <p>🧪 Endpoints de test :</p>
-        <a href="/hello-public" style="color: #667eea; margin: 0 5px;">Public</a> |
-        <a href="/hello-private" style="color: #667eea; margin: 0 5px;">Privé</a> |
-        <a href="/user-info" style="color: #667eea; margin: 0 5px;">User Info</a> |
-        <a href="/admin-only" style="color: #667eea; margin: 0 5px;">Admin</a>
+        <p>Endpoints de test :</p>
+        <a href="/hello-public" style="color: #667eea; margin: 0 10px;">Public</a> |
+        <a href="/hello-private" style="color: #667eea; margin: 0 10px;">Privé</a>
+        </p>
     </div>
-</div>
 </body>
 </html>

@@ -15,65 +15,70 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
+    /**
+     * Configuration des utilisateurs en mémoire
+     * Alternative à application.properties pour plus de flexibilité
+     */
+    @Bean
+    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+
+        // Utilisateur 1 : Développeur principal
+        UserDetails matthieu = User.builder()
+                .username("matthieu")
+                .password(passwordEncoder.encode("dev2024"))
+                .roles("USER", "ADMIN", "DEVELOPER")
+                .build();
+
+        // Utilisateur 2 : Utilisateur standard
+        UserDetails alice = User.builder()
+                .username("alice")
+                .password(passwordEncoder.encode("alice123"))
+                .roles("USER")
+                .build();
+
+        // Utilisateur 3 : Manager
+        UserDetails bob = User.builder()
+                .username("bob")
+                .password(passwordEncoder.encode("manager456"))
+                .roles("USER", "MANAGER")
+                .build();
+
+        // Utilisateur 4 : Admin système
+        UserDetails admin = User.builder()
+                .username("admin")
+                .password(passwordEncoder.encode("admin789"))
+                .roles("ADMIN", "SYSTEM")
+                .build();
+
+        return new InMemoryUserDetailsManager(matthieu, alice, bob, admin);
+    }
+
+    /**
+     * Encodeur de mot de passe BCrypt (sécurisé)
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        // Création de plusieurs utilisateurs en mémoire
-        UserDetails matthieu = User.builder()
-                .username("matthieu")
-                .password(passwordEncoder.encode("password123"))
-                .roles("USER", "ADMIN")
-                .build();
-
-        UserDetails alice = User.builder()
-                .username("alice")
-                .password(passwordEncoder.encode("alice2025"))
-                .roles("USER")
-                .build();
-
-        UserDetails bob = User.builder()
-                .username("bob")
-                .password(passwordEncoder.encode("bob2025"))
-                .roles("USER", "MANAGER")
-                .build();
-
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password(passwordEncoder.encode("admin123"))
-                .roles("ADMIN", "MANAGER", "USER")
-                .build();
-
-        // Utilisateur de test avec mot de passe simple (pour le développement)
-        UserDetails testUser = User.builder()
-                .username("test")
-                .password(passwordEncoder.encode("test"))
-                .roles("USER")
-                .build();
-
-        return new InMemoryUserDetailsManager(matthieu, alice, bob, admin, testUser);
-    }
-
+    /**
+     * Configuration de la chaîne de filtres de sécurité
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        // URLs publiques
-                        .requestMatchers("/hello-public", "/login", "/css/**", "/js/**").permitAll()
-
-                        // URLs nécessitant un rôle spécifique
-                        .requestMatchers("/admin-only").hasRole("ADMIN")
-
-                        // Toutes les autres URLs nécessitent une authentification
+                        // Pages publiques
+                        .requestMatchers("/hello-public", "/login", "/user-info", "/css/**", "/js/**").permitAll()
+                        // Pages nécessitant une authentification
+                        .requestMatchers("/hello-private", "/profile", "/admin/**").authenticated()
+                        // Toute autre requête nécessite une authentification
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/user-info", true)  // Redirige vers user-info après login
+                        .defaultSuccessUrl("/profile", true)  // Redirection vers le profil après login
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )

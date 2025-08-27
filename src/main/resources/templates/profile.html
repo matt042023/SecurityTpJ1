@@ -1,10 +1,310 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Utilisateur - Demo Security</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-card h3 {
+            margin: 0 0 15px 0;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .info-value {
+            color: #333;
+            font-family: 'Courier New', monospace;
+            background: #e9ecef;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .role-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .role-badge {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .role-admin {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .role-developer {
+            background: #4ecdc4;
+            color: white;
+        }
+
+        .role-manager {
+            background: #45b7d1;
+            color: white;
+        }
+
+        .role-user {
+            background: #96ceb4;
+            color: white;
+        }
+
+        .role-system {
+            background: #feca57;
+            color: #333;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-active {
+            background: #2ecc71;
+        }
+
+        .status-inactive {
+            background: #e74c3c;
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .json-viewer {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-$END$
+<div class="container">
+    <div class="header">
+        <h1>👤 Profil Utilisateur</h1>
+        <p th:text="'Connecté le ' + ${connectionTime}">Heure de connexion</p>
+    </div>
+
+    <div class="content">
+        <!-- Informations utilisateur principales -->
+        <div class="info-card">
+            <h3>🔐 Informations d'authentification</h3>
+            <div class="info-row">
+                <span class="info-label">Nom d'utilisateur :</span>
+                <span class="info-value" th:text="${username}">username</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Statut :</span>
+                <span>
+                        <span th:if="${isAuthenticated}" class="status-indicator status-active"></span>
+                        <span th:unless="${isAuthenticated}" class="status-indicator status-inactive"></span>
+                        <span th:text="${isAuthenticated} ? 'Authentifié' : 'Non authentifié'">Statut</span>
+                    </span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Type d'authentification :</span>
+                <span class="info-value" th:text="${authenticationClass}">Type</span>
+            </div>
+        </div>
+
+        <!-- Rôles et autorités -->
+        <div class="info-card">
+            <h3>🎭 Rôles et Autorités</h3>
+            <div class="role-badges">
+                    <span th:each="authority : ${authorities}"
+                          th:class="'role-badge ' +
+                            (${authority.authority.contains('ADMIN')} ? 'role-admin' : '') +
+                            (${authority.authority.contains('DEVELOPER')} ? 'role-developer' : '') +
+                            (${authority.authority.contains('MANAGER')} ? 'role-manager' : '') +
+                            (${authority.authority.contains('USER')} ? 'role-user' : '') +
+                            (${authority.authority.contains('SYSTEM')} ? 'role-system' : '')"
+                          th:text="${authority.authority}">
+                        ROLE
+                    </span>
+            </div>
+        </div>
+
+        <!-- Permissions spéciales -->
+        <div class="info-card">
+            <h3>⚡ Permissions spéciales</h3>
+            <div class="info-row">
+                <span class="info-label">Accès Admin :</span>
+                <span th:text="${isAdmin} ? '✅ Autorisé' : '❌ Non autorisé'">Permission</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Accès Développeur :</span>
+                <span th:text="${isDeveloper} ? '✅ Autorisé' : '❌ Non autorisé'">Permission</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Accès Manager :</span>
+                <span th:text="${isManager} ? '✅ Autorisé' : '❌ Non autorisé'">Permission</span>
+            </div>
+        </div>
+
+        <!-- Détails UserDetails (si disponible) -->
+        <div th:if="${hasUserDetails}" class="info-card">
+            <h3>🔍 Détails du compte</h3>
+            <div class="info-row">
+                <span class="info-label">Compte non expiré :</span>
+                <span th:text="${userDetails.accountNonExpired} ? '✅ Oui' : '❌ Non'">Statut</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Compte non verrouillé :</span>
+                <span th:text="${userDetails.accountNonLocked} ? '✅ Oui' : '❌ Non'">Statut</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Identifiants non expirés :</span>
+                <span th:text="${userDetails.credentialsNonExpired} ? '✅ Oui' : '❌ Non'">Statut</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Compte activé :</span>
+                <span th:text="${userDetails.enabled} ? '✅ Oui' : '❌ Non'">Statut</span>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions">
+            <a href="/hello-private" class="btn btn-primary">🔒 Zone Privée</a>
+            <a href="/hello-public" class="btn btn-secondary">🌐 Zone Publique</a>
+            <a href="/user-info" class="btn btn-secondary" target="_blank">📄 API JSON</a>
+            <a th:if="${isAdmin}" href="/admin/dashboard" class="btn btn-primary" target="_blank">⚙️ Dashboard Admin</a>
+            <a href="/logout" class="btn btn-danger">🚪 Déconnexion</a>
+        </div>
+    </div>
+</div>
+
+<!-- Script pour afficher les informations en temps réel -->
+<script>
+    // Affichage des informations d'authentification en JSON
+    console.log('=== INFORMATIONS D\'AUTHENTIFICATION ===');
+    console.log('Utilisateur:', '[[${username}]]');
+    console.log('Authentifié:', [[${isAuthenticated}]]);
+    console.log('Rôles:', '[[${authorities}]]');
+
+    // Fonction pour rafraîchir les infos utilisateur
+    function refreshUserInfo() {
+        fetch('/user-info')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Mise à jour des informations utilisateur:', data);
+            })
+            .catch(error => console.error('Erreur:', error));
+    }
+
+    // Rafraîchissement automatique toutes les 30 secondes
+    setInterval(refreshUserInfo, 30000);
+</script>
 </body>
 </html>
