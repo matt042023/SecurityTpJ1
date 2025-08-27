@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Demo Security</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h2 {
+            color: #333;
+            margin: 0 0 10px 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .login-header p {
+            color: #666;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            background: #ffeaea;
+            border: 1px solid #ffb3b3;
+            color: #d63031;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .success-message {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            color: #2e7d32;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .info-box strong {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <div class="login-header">
+        <h2>🔐 Connexion</h2>
+        <p>Accédez à votre espace sécurisé</p>
+    </div>
+
+    <!-- Message d'information pour les développeurs -->
+    <div class="info-box">
+        <strong>ℹ️ Utilisateurs de test disponibles</strong><br>
+        👨‍💻 <code>matthieu</code> / <code>password123</code> (USER, ADMIN)<br>
+        👩‍💼 <code>alice</code> / <code>alice2025</code> (USER)<br>
+        👨‍💼 <code>bob</code> / <code>bob2025</code> (USER, MANAGER)<br>
+        🔑 <code>admin</code> / <code>admin123</code> (ADMIN, MANAGER, USER)<br>
+        🧪 <code>test</code> / <code>test</code> (USER)
+    </div>
+
+    <!-- Affichage des erreurs de login -->
+    <div th:if="${param.error}" class="error-message">
+        ❌ Nom d'utilisateur ou mot de passe incorrect
+    </div>
+
+    <!-- Affichage du message de déconnexion -->
+    <div th:if="${param.logout}" class="success-message">
+        ✅ Vous avez été déconnecté avec succès
+    </div>
+
+    <!-- Formulaire de connexion -->
+    <form th:action="@{/login}" method="post">
+        <div class="form-group">
+            <label for="username">👤 Nom d'utilisateur :</label>
+            <input type="text" id="username" name="username" required
+                   placeholder="Entrez votre nom d'utilisateur"
+                   value="test">
+        </div>
+
+        <div class="form-group">
+            <label for="password">🔑 Mot de passe :</label>
+            <input type="password" id="password" name="password" required
+                   placeholder="Entrez votre mot de passe">
+        </div>
+
+        <button type="submit" class="login-button">
+            🚀 Se connecter
+        </button>
+    </form>
+
+    <!-- Liens utiles pour le développement -->
+    <div style="margin-top: 20px; text-align: center; font-size: 12px; color: #999;">
+        <p>🧪 Endpoints de test :</p>
+        <a href="/hello-public" style="color: #667eea; margin: 0 5px;">Public</a> |
+        <a href="/hello-private" style="color: #667eea; margin: 0 5px;">Privé</a> |
+        <a href="/user-info" style="color: #667eea; margin: 0 5px;">User Info</a> |
+        <a href="/admin-only" style="color: #667eea; margin: 0 5px;">Admin</a>
+    </div>
+</div>
+</body>
+</html>
